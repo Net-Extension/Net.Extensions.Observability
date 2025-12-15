@@ -19,19 +19,19 @@ public static class MetricsExtensions
         var options = new MetricsOptions();
         configure?.Invoke(options);
 
-        var builder = Sdk.CreateMeterProviderBuilder()
-            .AddMeter(meterName)
-            .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                .AddService(options.ServiceName, serviceVersion: options.ServiceVersion));
+        var resourceBuilder = ResourceBuilder.CreateDefault()
+            .AddService(options.ServiceName, serviceVersion: options.ServiceVersion);
 
-        // Add custom resource attributes
+        // Add custom resource attributes if present
         if (options.ResourceAttributes.Count > 0)
         {
-            builder.SetResourceBuilder(
-                ResourceBuilder.CreateDefault()
-                    .AddService(options.ServiceName, serviceVersion: options.ServiceVersion)
-                    .AddAttributes(options.ResourceAttributes.Select(kv => new KeyValuePair<string, object>(kv.Key, kv.Value))));
+            resourceBuilder = resourceBuilder.AddAttributes(
+                options.ResourceAttributes.Select(kv => new KeyValuePair<string, object>(kv.Key, kv.Value)));
         }
+
+        var builder = Sdk.CreateMeterProviderBuilder()
+            .AddMeter(meterName)
+            .SetResourceBuilder(resourceBuilder);
 
         if (options.ExportToConsole)
         {

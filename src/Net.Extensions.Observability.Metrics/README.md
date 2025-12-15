@@ -57,7 +57,7 @@ var recorder = MetricsExtensions.CreateMetricsRecorder(
         options.ResourceAttributes["region"] = "us-east-1";
     });
 
-recorder.Information("Metrics configured with custom settings");
+recorder.IncrementCounter("requests.total");
 ```
 
 ### Using with Tags

@@ -42,8 +42,8 @@ public sealed class OpenTelemetryMetricsRecorder : IMetricsRecorder
     /// <inheritdoc />
     public void RecordGauge(string name, double value, params KeyValuePair<string, object?>[] tags)
     {
-        // ObservableGauge requires a callback, so we use Histogram for instant values
-        // For true gauge behavior, users should create ObservableGauge directly
+        // Note: This uses a Histogram for instant gauge values.
+        // For continuous gauge monitoring, use System.Diagnostics.Metrics.ObservableGauge directly.
         var histogram = _meter.CreateHistogram<double>(name);
         if (tags.Length > 0)
         {
